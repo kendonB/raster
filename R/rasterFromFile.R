@@ -119,7 +119,7 @@
 	test <- try( r <- .rasterFromGDAL(x, band=band, objecttype, ...), silent=silent )
 	if (class(test) == "try-error") {
 		if (!file.exists(x)) {
-			stop("Cannot create a RasterLayer object from this file. (file does not exist)")
+			stop(paste("Cannot create a RasterLayer object from file: ", x, " (file does not exist)))
 		}
 		stop(paste("Cannot create a RasterLayer object from file: ", x))
 	} else {
