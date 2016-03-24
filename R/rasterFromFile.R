@@ -121,7 +121,7 @@
 		if (!file.exists(x)) {
 			stop("Cannot create a RasterLayer object from this file. (file does not exist)")
 		}
-		stop("Cannot create a RasterLayer object from this file.")
+		stop(paste("Cannot create a RasterLayer object from file: ", x))
 	} else {
 		return(r)
 	}
