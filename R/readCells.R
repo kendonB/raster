@@ -138,20 +138,27 @@
 	colrow[,1] <- colFromCell(x, cells)
 	colrow[,2] <- rowFromCell(x, cells)
 	colrow[,3] <- NA
-	rows <- sort(unique(colrow[,2]))
-
+	colrow <- colrow[order(colrow[,2], colrow[,1]),]
+	
+	# This is one if contiguous, something else if not (except for the end of a row)
+	diffrowcol <- diff(colrow[,2]) + diff(colrow[,1])
+	# Block numbers
+	blocknums <- cumsum(c(TRUE, diffrowcol != 1))
+	
 	nc <- x@ncols
+	
 	con <- rgdal::GDAL.open(x@file@name, silent=TRUE)
 	
 	if (laysel == 1) {
-		for (i in 1:length(rows)) {
-			offs <- c(rows[i]-1, 0) 
-			v <- rgdal::getRasterData(con, offset=offs, region.dim=c(1, nc), band = layers)
-			thisrow <- colrow[colrow[,2] == rows[i], , drop=FALSE]
-			colrow[colrow[,2]==rows[i], 3] <- v[thisrow[,1]]
+		for (blocknum in unique(blocknums)) {
+		  block_lgl <- blocknum == blocknums
+		  offs <- c(colrow[block_lgl,2][1] - 1, colrow[block_lgl, 1][1] - 1)
+			v <- rgdal::getRasterData(con, offset=offs, region.dim=c(1, sum(block_lgl)), band = layers)
+			
+			colrow[block_lgl, 3] <- v
 		}
 	} else {
-		for (i in 1:length(rows)) {
+		for (blocknum in unique(blocknums)) {
 			thisrow <- colrow[colrow[,2] == rows[i], , drop=FALSE]
 			if (nrow(thisrow) == 1) {
 				offs <- c(rows[i]-1, thisrow[,1]-1)
