@@ -5,7 +5,8 @@ Version: 2.5-2
 Date: 2015-12-18
 Depends: methods, sp (>= 1.2-0), R (>= 3.0.0)
 Suggests: rgdal (>= 0.9-1), rgeos (>= 0.3-8), ncdf4, igraph, tcltk,
-        parallel, rasterVis
+        parallel, rasterVis,
+    testthat
 LinkingTo: Rcpp
 Imports: Rcpp
 Authors@R: c(
