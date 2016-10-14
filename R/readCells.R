@@ -137,7 +137,7 @@
 	colrow[,1] <- colFromCell(x, cells)
 	colrow[,2] <- rowFromCell(x, cells)
 	
-	colrow <- colrow[order(colrow[,2], colrow[,1]),]
+	colrow <- colrow[order(colrow[,2], colrow[,1]), , drop = FALSE]
 	
 	# This is one if contiguous, something else if not (except for the end of a row)
 	diffrowcol <- diff(colrow[,2]) + diff(colrow[,1])
@@ -163,7 +163,7 @@
 		  offs <- c(colrow[block_lgl,2][1] - 1, colrow[block_lgl, 1][1] - 1)
 			if (nrow(this_block) == 1) {
 			  v <- as.vector( rgdal::getRasterData(con, offset=offs, region.dim=c(1, 1)) )
-				colrow[colrow[,2]==rows[i], 2+(1:laysel)] <- v[layers]
+				colrow[block_lgl, 2+(1:laysel)] <- v[layers]
 			} else {
 			  v <- rgdal::getRasterData(con, offset=offs, region.dim=c(1, sum(block_lgl)), band = layers)
 				v <- do.call(cbind, lapply(1:nl, function(i) v[,,i]))
@@ -174,8 +174,8 @@
 	}
 	rgdal::closeDataset(con)
 	colnames(colrow)[2+(1:laysel)] <- names(x)[layers]
-	colrow[, 2+(1:laysel)]
-}	
+	colrow[, 2+(1:laysel), drop = laysel == 1]
+}
 
 
 

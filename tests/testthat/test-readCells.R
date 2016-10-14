@@ -55,20 +55,57 @@ test_that(".readCellsGDAL, getValuesBlock, `[`, and extract match for .grd, .bil
   expect_identical(gv_block_ras_grd, extr_ras_tif)
 })
 
+test_that("`[` yields names (or no names) for both 1 and 2 elements requested", {
+  sq_bracket_ras_grd_1 <- rlogo_raster[cells_rc[1]]
+  sq_bracket_ras_grd_2 <- rlogo_raster[cells_rc[1:2]]
+  expect_equal(is.null(names(sq_bracket_ras_grd_2)),
+               is.null(names(sq_bracket_ras_grd_1)))
+})
+
+test_that(".readCellsGDAL, getValuesBlock, `[`, and extract match for .grd, .bil, .tif, and RasterLayer for a single cell", {
+  gv_block_ras_grd <- getValuesBlock(rlogo_raster, row = row_col[1, 1], nrows = 1,
+                                     col = row_col[1, 2], ncols = 1)
+  sq_bracket_ras_grd <- rlogo_raster[cells_rc[1]]
+  extr_ras_grd <- raster::extract(rlogo_raster, cells_rc[1])
+  
+  gv_block_ras_bil <- getValuesBlock(rlogo_raster_bil, row = row_col[1, 1], nrows = 1,
+                                     col = row_col[1, 2], ncols = 1)
+  rcGDAL_ras_bil <- raster:::.readCellsGDAL(rlogo_raster_bil, cells = cells_rc[1], layers = 1)
+  sq_bracket_ras_bil <- rlogo_raster_bil[cells_rc[1]]
+  extr_ras_bil <- raster::extract(rlogo_raster_bil, cells_rc[1])
+  
+  gv_block_ras_tif <- getValuesBlock(rlogo_raster_tif, row = row_col[1, 1], nrows = 1,
+                                     col = row_col[1, 2], ncols = 1)
+  rcGDAL_ras_tif <- raster:::.readCellsGDAL(rlogo_raster_tif, cells = cells_rc[1], layers = 1)
+  sq_bracket_ras_tif <- rlogo_raster_tif[cells_rc[1]]
+  extr_ras_tif <- raster::extract(rlogo_raster_tif, cells_rc[1])
+  
+  expect_identical(gv_block_ras_grd, sq_bracket_ras_grd)
+  expect_identical(gv_block_ras_grd, extr_ras_grd)
+  expect_identical(gv_block_ras_grd, gv_block_ras_bil)
+  expect_identical(gv_block_ras_grd, rcGDAL_ras_bil)
+  expect_identical(gv_block_ras_grd, sq_bracket_ras_bil)
+  expect_identical(gv_block_ras_grd, extr_ras_bil)
+  expect_identical(gv_block_ras_grd, gv_block_ras_tif)
+  expect_identical(gv_block_ras_grd, rcGDAL_ras_tif)
+  expect_identical(gv_block_ras_grd, sq_bracket_ras_tif)
+  expect_identical(gv_block_ras_grd, extr_ras_tif)
+})
+
 test_that("getValuesBlock, `[`, and extract match for .grd, .bil, .tif, and RasterStack", {
   gv_block_stack_grd <- getValuesBlock(rlogo_stack, row = row_col[1, 1], nrows = 4,
-                                     col = row_col[1, 2], ncols = 3)
+                                       col = row_col[1, 2], ncols = 3)
   sq_bracket_stack_grd <- rlogo_stack[cells_rc]
   extr_stack_grd <- raster::extract(rlogo_stack, cells_rc)
   
   gv_block_stack_bil <- getValuesBlock(rlogo_stack_bil, row = row_col[1, 1], nrows = 4,
-                                     col = row_col[1, 2], ncols = 3)
+                                       col = row_col[1, 2], ncols = 3)
   
   sq_bracket_stack_bil <- rlogo_stack_bil[cells_rc]
   extr_stack_bil <- raster::extract(rlogo_stack_bil, cells_rc)
   
   gv_block_stack_tif <- getValuesBlock(rlogo_stack_tif, row = row_col[1, 1], nrows = 4,
-                                     col = row_col[1, 2], ncols = 3)
+                                       col = row_col[1, 2], ncols = 3)
   
   sq_bracket_stack_tif <- rlogo_stack_tif[cells_rc]
   extr_stack_tif <- raster::extract(rlogo_stack_tif, cells_rc)
@@ -83,20 +120,48 @@ test_that("getValuesBlock, `[`, and extract match for .grd, .bil, .tif, and Rast
   expect_identical(gv_block_stack_grd, extr_stack_tif)
 })
 
+test_that("getValuesBlock, `[`, and extract match for .grd, .bil, .tif, and RasterStack and a single cell", {
+  gv_block_stack_grd <- getValuesBlock(rlogo_stack, row = row_col[1, 1], nrows = 1,
+                                       col = row_col[1, 2], ncols = 1)
+  sq_bracket_stack_grd <- rlogo_stack[cells_rc[1]]
+  extr_stack_grd <- raster::extract(rlogo_stack, cells_rc[1])
+  
+  gv_block_stack_bil <- getValuesBlock(rlogo_stack_bil, row = row_col[1, 1], nrows = 1,
+                                       col = row_col[1, 2], ncols = 1)
+  
+  sq_bracket_stack_bil <- rlogo_stack_bil[cells_rc[1]]
+  extr_stack_bil <- raster::extract(rlogo_stack_bil, cells_rc[1])
+  
+  gv_block_stack_tif <- getValuesBlock(rlogo_stack_tif, row = row_col[1, 1], nrows = 1,
+                                       col = row_col[1, 2], ncols = 1)
+  
+  sq_bracket_stack_tif <- rlogo_stack_tif[cells_rc[1]]
+  extr_stack_tif <- raster::extract(rlogo_stack_tif, cells_rc[1])
+  
+  expect_identical(gv_block_stack_grd, sq_bracket_stack_grd)
+  expect_identical(gv_block_stack_grd, extr_stack_grd)
+  expect_identical(gv_block_stack_grd, gv_block_stack_bil)
+  expect_identical(gv_block_stack_grd, sq_bracket_stack_bil)
+  expect_identical(gv_block_stack_grd, extr_stack_bil)
+  expect_identical(gv_block_stack_grd, gv_block_stack_tif)
+  expect_identical(gv_block_stack_grd, sq_bracket_stack_tif)
+  expect_identical(gv_block_stack_grd, extr_stack_tif)
+})
+
 test_that(".readCellsGDAL, getValuesBlock, `[`, and extract match for .grd, .bil, .tif, and RasterBrick", {
   gv_block_brick_grd <- getValuesBlock(rlogo_brick, row = row_col[1, 1], nrows = 4,
-                                     col = row_col[1, 2], ncols = 3)
+                                       col = row_col[1, 2], ncols = 3)
   sq_bracket_brick_grd <- rlogo_brick[cells_rc]
   extr_brick_grd <- raster::extract(rlogo_brick, cells_rc)
   
   gv_block_brick_bil <- getValuesBlock(rlogo_brick_bil, row = row_col[1, 1], nrows = 4,
-                                     col = row_col[1, 2], ncols = 3)
+                                       col = row_col[1, 2], ncols = 3)
   
   sq_bracket_brick_bil <- rlogo_brick_bil[cells_rc]
   extr_brick_bil <- raster::extract(rlogo_brick_bil, cells_rc)
   
   gv_block_brick_tif <- getValuesBlock(rlogo_brick_tif, row = row_col[1, 1], nrows = 4,
-                                     col = row_col[1, 2], ncols = 3)
+                                       col = row_col[1, 2], ncols = 3)
   rcGDAL_brick_tif <- raster:::.readCellsGDAL(rlogo_brick_tif, cells = cells_rc, layers = 1:3)
   sq_bracket_brick_tif <- rlogo_brick_tif[cells_rc]
   extr_brick_tif <- raster::extract(rlogo_brick_tif, cells_rc)
@@ -111,3 +176,33 @@ test_that(".readCellsGDAL, getValuesBlock, `[`, and extract match for .grd, .bil
   expect_identical(gv_block_brick_grd, sq_bracket_brick_tif)
   expect_identical(gv_block_brick_grd, extr_brick_tif)
 })
+
+test_that(".readCellsGDAL, getValuesBlock, `[`, and extract match for .grd, .bil, .tif, and RasterBrick and a single cell", {
+  gv_block_brick_grd <- getValuesBlock(rlogo_brick, row = row_col[1, 1], nrows = 1,
+                                       col = row_col[1, 2], ncols = 1)
+  sq_bracket_brick_grd <- rlogo_brick[cells_rc[1]]
+  extr_brick_grd <- raster::extract(rlogo_brick, cells_rc[1])
+  
+  gv_block_brick_bil <- getValuesBlock(rlogo_brick_bil, row = row_col[1, 1], nrows = 1,
+                                       col = row_col[1, 2], ncols = 1)
+  
+  sq_bracket_brick_bil <- rlogo_brick_bil[cells_rc[1]]
+  extr_brick_bil <- raster::extract(rlogo_brick_bil, cells_rc[1])
+  
+  gv_block_brick_tif <- getValuesBlock(rlogo_brick_tif, row = row_col[1, 1], nrows = 1,
+                                       col = row_col[1, 2], ncols = 1)
+  rcGDAL_brick_tif <- raster:::.readCellsGDAL(rlogo_brick_tif, cells = cells_rc[1], layers = 1:3)
+  sq_bracket_brick_tif <- rlogo_brick_tif[cells_rc[1]]
+  extr_brick_tif <- raster::extract(rlogo_brick_tif, cells_rc[1])
+  
+  expect_identical(gv_block_brick_grd, sq_bracket_brick_grd)
+  expect_identical(gv_block_brick_grd, extr_brick_grd)
+  expect_identical(gv_block_brick_grd, gv_block_brick_bil)
+  expect_identical(gv_block_brick_grd, sq_bracket_brick_bil)
+  expect_identical(gv_block_brick_grd, extr_brick_bil)
+  expect_identical(gv_block_brick_grd, gv_block_brick_tif)
+  expect_identical(gv_block_brick_grd, rcGDAL_brick_tif)
+  expect_identical(gv_block_brick_grd, sq_bracket_brick_tif)
+  expect_identical(gv_block_brick_grd, extr_brick_tif)
+})
+
